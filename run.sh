@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Based on https://github.com/jacksoncage/salt-docker
+
 # Variables from environement
 : "${SALT_TYPE:=master}"
 : "${SALT_NAME:=master}"
