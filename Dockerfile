@@ -3,22 +3,19 @@
 FROM        ubuntu:14.04
 MAINTAINER  Marian Zange <marian@crashpad.io>
 
-ENV SALT_VERSION 2015.5.3+ds-1trusty1
+ENV SALT_VERSION v2015.8.0rc5
 
+# Download required packages
 RUN apt-get update
-RUN apt-get install -y wget curl dnsutils python-pip python-dev python-apt \
-    python-software-properties software-properties-common dmidecode
+RUN apt-get install -y wget python-software-properties software-properties-common
 
-RUN add-apt-repository ppa:saltstack/salt
+# Download and install SaltStack
+RUN wget -O install_salt.sh https://bootstrap.saltstack.com
+RUN sudo sh install_salt.sh -P git $SALT_VERSION; exit 0
 
-RUN apt-get update
-RUN apt-get install -y \
-    salt-master=$SALT_VERSION \
-    salt-minion=$SALT_VERSION \
-    salt-cloud=$SALT_VERSION \
-    salt-ssh=$SALT_VERSION \
-    salt-api=$SALT_VERSION \
-    salt-syndic=$SALT_VERSION
+# Clean temporary files
+RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD etc/master /etc/salt/master
 ADD etc/minion /etc/salt/minion

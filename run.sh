@@ -4,18 +4,11 @@
 
 # Variables from environement
 : "${SALT_TYPE:=master}"
-: "${SALT_NAME:=master}"
-: "${LOG_LEVEL:=info}"
-: "${OPTIONS:=}"
+: "${SALT_NAME:=salt-master}"
 
 # Set minion id
 echo $SALT_NAME > /etc/salt/minion_id
-
-# If salt master also start minion in background
-if [ "$SALT_TYPE" == "master" ]; then
-  echo "INFO: Starting salt-minion and auto connect to salt-master"
-  sudo service salt-minion start
-fi
+service salt-minion start
 
 # Set salt grains
 if [ ! -z "$SALT_GRAINS" ]; then
@@ -23,5 +16,7 @@ if [ ! -z "$SALT_GRAINS" ]; then
   echo $SALT_GRAINS > /etc/salt/grains
 fi
 
-# Start salt
-echo "INFO: Starting salt-$SALT_TYPE with log level $LOG_LEVEL with hostname $SALT_NAME"
+
+if [ "$SALT_TYPE" == "master" ]; then
+  salt-master -l info
+fi
